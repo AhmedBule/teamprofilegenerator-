@@ -49,7 +49,7 @@ function displayMenu(){
 
 // and to create objects for each team member (using the correct classes as blueprints!)
 
-const writeFileAsync = util.promisify(fs.writeFile);
+// const writeFileAsync = util.promisify(fs.writeFile);
 
 function promptManager() {
   inquirer.prompt([
@@ -192,7 +192,24 @@ function promptEngineer() {
                </ul>
              </div>`
            }
-           htmlContent += managerText
+
+           htmlContent += engineerText
+           let engineerText = " "
+           for (let i = 0; i < engineerList.length; i++){
+            engineerText +=`<div class="card" style="width: 18rem;">
+            <div class="card-header">
+              Engineer
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">${engineerList[i].name}</li>
+              <li class="list-group-item">${engineerList[i].id}</li>
+              <li class="list-group-item">${engineerList[i].email}</li>
+              <li class="list-group-item">${engineerList[i].github}</li>
+            </ul>
+          </div>`
+           }
+
+           htmlContent += internText
            let internText = " "
            for (let i = 0; i < internList.length; i++){
             internText +=`<div class="card" style="width: 18rem;">
