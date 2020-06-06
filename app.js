@@ -138,6 +138,18 @@ function promptEngineer() {
           ]);
         }
 
+        promptUser()
+  .then(function(answers) {
+    const employee = generateAnswers(answers);
+
+    return writeFileAsync("main.html", employee);
+  })
+  .then(function() {
+    console.log("Successfully wrote to main.html");
+  })
+  .catch(function(err) {
+    console.log(err);
+  });
 
 
 
