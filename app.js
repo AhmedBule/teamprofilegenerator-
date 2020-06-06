@@ -10,6 +10,40 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+let managerList = [];
+let engineerList = [];
+let internList = [];
+
+function displayMenu(){
+    inquirer.prompt([
+        {
+            type:"list", 
+            name: "main-menu",
+            choices: ["Add a Manager", "Add an Engineer", "Add an Intern", "Exit the Application"],
+            message: "My Team"
+        }
+    ])
+    .then(function(displayMenu){
+      switch (displayMenu.main-menu) {
+          case "Add a Manager":
+              promptManager();
+              break;
+              case "Add an Engineer":
+                promptEngineer();
+                break;
+                case "Add an Intern":
+                    promptIntern();
+                    break;
+                    case "Exit the Application":
+                        writefileApplication();
+                        break;
+      
+          default:
+              break;
+      }
+    })
+}
+
 
 // Write code to use inquirer to gather information about the development team members,
 
@@ -18,7 +52,7 @@ const render = require("./lib/htmlRenderer");
 const writeFileAsync = util.promisify(fs.writeFile);
 
 function promptManager() {
-  return inquirer.prompt([
+  inquirer.prompt([
     {
       type: "input",
       name: "name",
@@ -36,20 +70,24 @@ function promptManager() {
     },
     {
       type: "input",
-      name: "phone number",
-      message: "What is your manager's phone number?"
+      name: "officeNumber",
+      message: "What is your manager's office number?"
     },
     {
         type: "input",
         name: "info",
         message: "which type of team member would you like to add?"
     },
-  ]);
+  ]).then(function(respmanager){
+      const manager = new Manager(respmanager.name,respmanager.ID, respmanager.email, respmanager.officeNumber)
+      managerList.push(manager)
+      displayMenu();
+  }
 }
 
 
 function promptEngineer() {
-  return inquirer.prompt([
+  inquirer.prompt([
     {
         type: "input",
         name: "name",
@@ -108,49 +146,76 @@ function promptEngineer() {
       ]);
     }
 
-    function promptEmployee() {
-        return inquirer.prompt([
-          {
-              type: "input",
-              name: "name",
-              message: "What is your employee's name?"
-            },
-            {
-              type: "input",
-              name: "ID",
-              message: "What is your employee's ID?"
-            },
-            {
-              type: "input",
-              name: "github",
-              message: "Enter your employee's GitHub Username"
-            },
-            {
-              type: "input",
-              name: "email",
-              message: "What is your employee's email?"
-            },
-            {
-                type: "input",
-                name: "info",
-                message: "which type of team members would you like to add?"
-            },
-          ]);
-        }
+//         promptUser()
+//   .then(function(answers) {
+//     const employee = displayMenu(answers);
 
-        promptUser()
-  .then(function(answers) {
-    const employee = generateAnswers(answers);
+//     return writeFileAsync("main.html", employee);
+//   })
+//   .then(function() {
+//     console.log("Successfully wrote to main.html");
+//   })
+//   .catch(function(err) {
+//     console.log(err);
+//   });
 
-    return writeFileAsync("main.html", employee);
-  })
-  .then(function() {
-    console.log("Successfully wrote to main.html");
-  })
-  .catch(function(err) {
-    console.log(err);
-  });
+   function writefileApplication(){
+       const header = `<!DOCTYPE html>
+       <html lang="en">
+       <head>
+           <meta charset="UTF-8">
+           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+           <title>My Team</title>
+       </head>
+       <body>
+           <div class="container-fluid">
+               <div class="row">
+                   <div class="col-12 jumbotron mb-3 team-heading">
+                       <h1 class="text-center">My Team</h1>
+                       <div class="container p-3 my-3 bg-primary text-white"></div>
+                   </div>
+               </div>
+           </div>`
+           let htmlContent = header
+           let managerText = ""
+           for (let i = 0; i < managerList.length; i++)
+           {
+               managerText += `<div class="card" style="width: 18rem;">
+               <div class="card-header">
+                 Manager 
+               </div>
+               <ul class="list-group list-group-flush">
+                 <li class="list-group-item">${managerList[i].name}</li>
+                 <li class="list-group-item">${managerList[i].id}</</li>
+                 <li class="list-group-item">${managerList[i].email}</</li>
+                 <li class="list-group-item">${managerList[i].officeNumber}</</li>
+               </ul>
+             </div>`
+           }
+           htmlContent += managerText
+           let internText = " "
+           for (let i = 0; i < internList.length; i++){
+            internText +=`<div class="card" style="width: 18rem;">
+            <div class="card-header">
+              Intern
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"></li>
+              <li class="list-group-item">Dapibus ac facilisis in</li>
+              <li class="list-group-item">Vestibulum at eros</li>
+            </ul>
+          </div>`
+           }
 
+
+           let footer = `</body>
+           </html>`
+           htmlContent += footer
+           fs.writeFileSync("./main.html", htmlContent, function(){
+            console.log("HTML file generated");
+            process.exit(0)
+           })
+   }
 
 
 // After the user has input all employees desired, call the `render` function (required
