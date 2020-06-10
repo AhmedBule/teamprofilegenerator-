@@ -1,6 +1,8 @@
-const Manager = require("./lib/Manager");
-const Engineer = require("./lib/Engineer");
-const Intern = require("./lib/Intern");
+const render = require('./lib/htmlrender');
+const manager = require("./lib/manager");
+const Employee = require("./lib/employee");
+const Engineer = require("./lib/engineer");
+const Intern = require("./lib/intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
@@ -8,7 +10,7 @@ const fs = require("fs");
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
-const render = require("./lib/htmlRenderer");
+// const render = require("./lib/htmlrender");
 
 let managerList = [];
 let engineerList = [];
@@ -83,7 +85,7 @@ function promptManager() {
       managerList.push(manager)
       displayMenu();
   }
-}
+  )}
 
 
 function promptEngineer() {
@@ -113,8 +115,12 @@ function promptEngineer() {
           name: "info",
           message: "which type of team members would you like to add?"
       },
-    ]);
+    ]).then(function(respengineer){
+      const engineer = new Engineer(respengineer.name,respengineer.ID, respengineer.email, respengineer.github)
+      engineerList.push(engineer)
+      displayMenu();
   }
+  )}
 
   function promptIntern() {
     return inquirer.prompt([
@@ -135,7 +141,7 @@ function promptEngineer() {
           },
         {
           type: "input",
-          name: "email",
+          name: "school",
           message: "What is your intern's school?"
         },
         {
@@ -143,9 +149,12 @@ function promptEngineer() {
             name: "info",
             message: "which type of team members would you like to add?"
         },
-      ]);
+      ]).then(function(respintern){
+        const manager = new Intern(respintern.name,respintern.ID, respmanager.email, respintern.school)
+        internList.push(intern)
+        displayMenu();
     }
-
+    )}
 //         promptUser()
 //   .then(function(answers) {
 //     const employee = displayMenu(answers);
@@ -220,6 +229,7 @@ function promptEngineer() {
               <li class="list-group-item">${internList[i].name}</li>
               <li class="list-group-item">${internList[i].id}</li>
               <li class="list-group-item">${internList[i].email}</</li>
+              <li class="list-group-item">${internList[i].school}</</li>
             </ul>
           </div>`
            }
@@ -232,8 +242,8 @@ function promptEngineer() {
             console.log("HTML file generated");
             process.exit(0)
            })
-   })
-
+   }
+  
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
