@@ -1,5 +1,5 @@
-const render = require('./lib/htmlrender');
-const manager = require("./lib/manager");
+// const render = require('./lib/htmlrender');
+const Manager = require("./lib/manager");
 const Employee = require("./lib/employee");
 const Engineer = require("./lib/engineer");
 const Intern = require("./lib/intern");
@@ -10,37 +10,39 @@ const fs = require("fs");
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
-// const render = require("./lib/htmlrender");
+const render = require("./lib/htmlrender");
 
 let managerList = [];
 let engineerList = [];
 let internList = [];
 
-function displayMenu(){
+function displayQuestions(){
     inquirer.prompt([
         {
             type:"list", 
-            name: "main-menu",
+            name: "mainmenu",
             choices: ["Add a Manager", "Add an Engineer", "Add an Intern", "Exit the Application"],
             message: "My Team"
         }
     ])
-    .then(function(displayMenu){
-      switch (displayMenu.main-menu) {
+    .then(function(choice){
+      console.log(choice.mainmenu)
+      switch (choice.mainmenu) {
+        
           case "Add a Manager":
               promptManager();
               break;
-              case "Add an Engineer":
+          case "Add an Engineer":
                 promptEngineer();
-                break;
-                case "Add an Intern":
+              break;
+          case "Add an Intern":
                     promptIntern();
-                    break;
-                    case "Exit the Application":
+              break;
+          case "Exit the Application":
                         writefileApplication();
-                        break;
-      
+              break;
           default:
+            console.log("displayQuestions");
               break;
       }
     })
@@ -54,6 +56,7 @@ function displayMenu(){
 // const writeFileAsync = util.promisify(fs.writeFile);
 
 function promptManager() {
+  console.log("promptManager");
   inquirer.prompt([
     {
       type: "input",
@@ -83,7 +86,7 @@ function promptManager() {
   ]).then(function(respmanager){
       const manager = new Manager(respmanager.name,respmanager.ID, respmanager.email, respmanager.officeNumber)
       managerList.push(manager)
-      displayMenu();
+      displayQuestions();
   }
   )}
 
@@ -118,12 +121,12 @@ function promptEngineer() {
     ]).then(function(respengineer){
       const engineer = new Engineer(respengineer.name,respengineer.ID, respengineer.email, respengineer.github)
       engineerList.push(engineer)
-      displayMenu();
+      displayQuestions();
   }
   )}
 
   function promptIntern() {
-    return inquirer.prompt([
+     inquirer.prompt([
       {
           type: "input",
           name: "name",
@@ -150,9 +153,9 @@ function promptEngineer() {
             message: "which type of team members would you like to add?"
         },
       ]).then(function(respintern){
-        const manager = new Intern(respintern.name,respintern.ID, respmanager.email, respintern.school)
+        const intern = new Intern(respintern.name,respintern.ID, respintern.email, respintern.school)
         internList.push(intern)
-        displayMenu();
+        displayQuestions();
     }
     )}
 //         promptUser()
@@ -186,7 +189,7 @@ function promptEngineer() {
                </div>
            </div>`
            let htmlContent = header
-           let managerText = ""
+           let managerText = " "
            for (let i = 0; i < managerList.length; i++)
            {
                managerText += `<div class="card" style="width: 18rem;">
@@ -196,13 +199,13 @@ function promptEngineer() {
                <ul class="list-group list-group-flush">
                  <li class="list-group-item">${managerList[i].name}</li>
                  <li class="list-group-item">${managerList[i].id}</</li>
-                 <li class="list-group-item">${managerList[i].email}</</li>
+                 <li class="list-group-item"><a href="mailto:{{managerList[i].email}}">${managerList[i].email}</</li>
                  <li class="list-group-item">${managerList[i].officeNumber}</</li>
                </ul>
              </div>`
            }
 
-           htmlContent += engineerText
+           htmlContent += managerText
            let engineerText = " "
            for (let i = 0; i < engineerList.length; i++){
             engineerText +=`<div class="card" style="width: 18rem;">
@@ -218,7 +221,7 @@ function promptEngineer() {
           </div>`
            }
 
-           htmlContent += internText
+           htmlContent += engineerText
            let internText = " "
            for (let i = 0; i < internList.length; i++){
             internText +=`<div class="card" style="width: 18rem;">
@@ -234,6 +237,8 @@ function promptEngineer() {
           </div>`
            }
 
+           htmlContent += internText
+
 
            let footer = `</body>
            </html>`
@@ -243,6 +248,8 @@ function promptEngineer() {
             process.exit(0)
            })
    }
+
+   displayQuestions();
   
 
 // After the user has input all employees desired, call the `render` function (required
