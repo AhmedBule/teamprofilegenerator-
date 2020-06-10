@@ -7,6 +7,9 @@ The application will prompt the user for information about the team manager and 
 ## Installation:
 To install, run npm init
 
+<img width="1278" alt="Screen Shot 2020-06-09 at 11 33 55 PM" src="https://user-images.githubusercontent.com/25271965/84227915-43b0a100-aaab-11ea-82cb-63e09f1786cb.png">
+
+
 ## Usage:
 Use the Inquirer npm package to prompt the user for their email, id, and specific information based on their role with the company.
 
